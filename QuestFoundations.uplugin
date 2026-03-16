@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Quest Foundations",
+	"Description": "A framework to allow complex narritive design focused at designers and writters",
+	"Category": "Other",
+	"CreatedBy": "Jasper",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "QuestFoundationsRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}, 		
+		{
+			"Name": "QuestFoundationsEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
