@@ -4,14 +4,14 @@
 #include "QuestStepGraphNode.h"
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
+#include "QuestStep.h"
 
 UQuestStepGraphNode::UQuestStepGraphNode()
+{}
+
+FText UQuestStepGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	_workingquestStep = NewObject<UQuestStep>();
-	
-	//TODO: depricate this variables and use the _workingquestStep directly
-	inputPins = _workingquestStep->GetInputPins();
-	outputPins = _workingquestStep->GetOutputPins();
+	return _questStep->GetNodeName();
 }
 
 void UQuestStepGraphNode::GetNodeContextMenuActions(class UToolMenu* menu,

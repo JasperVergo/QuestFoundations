@@ -18,15 +18,15 @@ class QUESTFOUNDATIONSRUNTIME_API UExsampleQuestStep : public UQuestStep
 	UExsampleQuestStep() : UQuestStep(
 		FText::FromString(TEXT("Quests")), 
 		FText::FromString(TEXT("Another quest node")), 
-		FText::FromString(TEXT("This is just a test")))
+		FText::FromString(TEXT("This is just a test")),
+		TArray<FName> {"input Pin"}, 
+		TArray<FName> {"output Pin01", "output Pin02", "output Pin03", "output Pin04", "output Pin05"})
 	{}
+	
+	virtual void InitQuestStep() override;
 	
 	protected:
 	
-	virtual void AddInputOutputPins() override
-	{
-		inputPins.Add("Another Input");
-		outputPins.Add("Another Output");
-		outputPins.Add("Another Output pt 2");
-	}
+
+	
 };

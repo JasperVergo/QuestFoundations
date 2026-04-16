@@ -11,13 +11,8 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestAsset : public UObject {
 
 public:
     UPROPERTY(EditAnywhere)
-    FString SomeData = TEXT("DefaultData");
-    
-    UPROPERTY(EditAnywhere)
-    int32 SomeNumber = 0;
-    
-    UPROPERTY(EditAnywhere)
-    bool SomeBool = false;
+    FString QuestName = TEXT("Enter Quest Name Here");
+
     
     
     UPROPERTY()

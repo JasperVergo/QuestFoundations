@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "QuestStep.h"
 #include "QuestGraphRuntime.generated.h"
 
 
@@ -24,6 +25,9 @@ public:
 	
 	UPROPERTY()
 	UQuestGraphRuntimePin* connection = nullptr;
+	
+	UPROPERTY()
+	UQuestGraphRuntimeNode* parent = nullptr;
 };
 
 UCLASS()
@@ -40,6 +44,9 @@ public:
 	
 	UPROPERTY()
 	FVector2D position;
+	
+	UPROPERTY()
+	UQuestStep* nodeClass = nullptr;
 };
 
 UCLASS()

@@ -11,19 +11,24 @@
 
 void UQuestFoundationsGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& contextMenuBuilder) const
 {
-	TArray<UQuestStep*> nodeClasses;
-	nodeClasses.Add(NewObject<UQuestStep>());
-	nodeClasses.Add(NewObject<UExsampleQuestStep>());
+	
+	TArray<UClass*> nodeClasses;
+	GetDerivedClasses(UQuestStep::StaticClass(), nodeClasses, true);
+	nodeClasses.Add(UQuestStep::StaticClass());
+	//nodeClasses.Add(UExsampleQuestStep::StaticClass());
 	//TODO: Replace with template that dose this automatically 
 	
-	for (UQuestStep* nodeClass : nodeClasses)
+	for (UClass* nodeClass : nodeClasses)
 	{
+		UQuestStep* objDefaults = NewObject<UQuestStep>(nodeClass, nodeClass);
+		objDefaults->InitQuestStep();
 		
 		TSharedPtr<FNewNodeAction> newNodeAction(
-			new FNewNodeAction(	
-				nodeClass->GetNodeCategory(), //Catigory
-				nodeClass->GetNodeName(), //Node Name
-				nodeClass->GetNodeToolTip(), //tooltip
+			new FNewNodeAction(
+				nodeClass, //class
+				objDefaults->GetNodeCategory(), //Catigory
+				objDefaults->GetNodeName(), //Node Name
+				objDefaults->GetNodeToolTip(), //tooltip
 				0 //group 
 			)
 		);
@@ -46,6 +51,11 @@ const FPinConnectionResponse UQuestFoundationsGraphSchema::CanCreateConnection(c
 	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT(""));
 }
 
+void UQuestFoundationsGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
+{
+	Super::CreateDefaultNodesForGraph(Graph);
+}
+
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* fromPin, const FVector2D location,
                                             bool bSelectNewNode)
 {
@@ -54,14 +64,26 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* 
 	result->CreateNewGuid();
 	result->NodePosX = location.X;
 	result->NodePosY = location.Y;
+	result->setNodeClass(NewObject<UQuestStep>(result, nodeType));
+	
 	UEdGraphPin* inputPin = nullptr;
-	//TODO: Make this dynamic based on the node
-	for (FName name : result->GetInputPins())
+
+	if (IsValid(result->getNodeClass()) )
+	{
+		UE_LOG(LogTemp, Display, TEXT("Created pins: %d"), result->getNodeClass()->GetOutputPins().Num());
+	}else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Class"));
+	}
+	
+	
+	for (FName name : result->getNodeClass()->GetInputPins())
 	{
 		inputPin = result->CreateQuestPin(EGPD_Input, name);
 	}
-	for (FName name : result->GetOutputPins())
+	for (FName name : result->getNodeClass()->GetOutputPins())
 	{
+
 		result->CreateQuestPin(EGPD_Output, name);
 	}
 	

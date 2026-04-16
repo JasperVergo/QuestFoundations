@@ -17,6 +17,7 @@ class QUESTFOUNDATIONSEDITOR_API UQuestFoundationsGraphSchema : public UEdGraphS
 public:
 	virtual void GetGraphContextActions(FGraphContextMenuBuilder& contextMenuBuilder) const override;
 	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* a, const UEdGraphPin* b) const override;
+	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
 	
 };
 
@@ -27,8 +28,11 @@ struct FNewNodeAction : public FEdGraphSchemaAction
 	
 public:
 	FNewNodeAction()  {}
-	FNewNodeAction(FText inNodeCatigory, FText inMenuDesc, FText inToolTip, const int32 inGrouping) : 
-		FEdGraphSchemaAction(inNodeCatigory, inMenuDesc, inToolTip, inGrouping) {}
+	FNewNodeAction(UClass* type, FText inNodeCatigory, FText inMenuDesc, FText inToolTip, const int32 inGrouping) : 
+		FEdGraphSchemaAction(inNodeCatigory, inMenuDesc, inToolTip, inGrouping), nodeType(type) {}
 	
 	virtual UEdGraphNode* PerformAction(UEdGraph* parentGraph, UEdGraphPin* fromPin, const FVector2D location, bool bSelectNewNode = true) override;
+	
+private:
+	UClass* nodeType;
 };

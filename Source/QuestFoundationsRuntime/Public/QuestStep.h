@@ -6,6 +6,7 @@
 #include "UObject/Object.h"
 #include "QuestStep.generated.h"
 
+
 /**
  * 
  */
@@ -14,17 +15,15 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 {
 	GENERATED_BODY()
 
-	public:
-	//TODO: Virtual destructor
-	UQuestStep(FText catagory, FText name, FText tooltip) : nodeCatagory{catagory}, nodeName{name}, nodeToolTip{tooltip}
-	{
-		AddInputOutputPins();
-	}
+	public: //editor interface 
 	
-	UQuestStep() : UQuestStep(
-		FText::FromString(TEXT("Quests")),
-		FText::FromString(TEXT("Add Quest Step")),
-		FText::FromString(TEXT("Adds a new quest step to the graph"))) {}
+	UQuestStep(FText catagory, FText name, FText tooltip, TArray<FName> inPins, TArray<FName> outPins) : 
+		inputPins{inPins}, outputPins{outPins}, nodeCatagory{catagory}, nodeName{name}, nodeToolTip{tooltip}
+	{}
+	
+	UQuestStep() {}
+	
+	virtual ~UQuestStep() = default;
 	
 	virtual TArray<FName> GetInputPins() {return inputPins;}
 	virtual TArray<FName> GetOutputPins() {return outputPins;}
@@ -32,22 +31,54 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 	virtual FText& GetNodeToolTip() {return nodeToolTip;}
 	virtual FText& GetNodeCategory() {return nodeCatagory;}
 	
-	
-	
-	protected:
-	
-	virtual void AddInputOutputPins()
-	{
-		inputPins.Add("Default Input");
-		outputPins.Add("Default Output");
-		inputPins.Add("inputs 3");
-	};
-	
 
-	TArray<FName> inputPins;
 	
+	public: //runtime quest functionallity (override these to make the quest do things
+	
+	virtual void InitQuestStep() {
+		//This is here to be overridden by child classes. this is where you will set the info about your node 
+		UE_LOG(LogTemp, Display, TEXT("inited quest step"));
+		nodeCatagory = FText::FromString(TEXT("Quests"));
+		nodeName = FText::FromString(TEXT("Quest Step"));
+		nodeToolTip = FText::FromString(TEXT("Adds a new quest step to the graph"));
+		outputPins = {"Input Pin"};
+		inputPins = {"Output Pin"};
 
-	TArray<FName> outputPins;
+	}
+	
+	//don't call these they are for the QuestRunner.h to call 
+	virtual void BeginQuestStep();
+	virtual void EndQuestStep() {OnQuestStepEnd.Broadcast(this);}
+	virtual void TickQuestStep(float DeltaTime) {}
+	virtual void ResievedInput(int inputPinIndex) {OnReievedInput.Broadcast(inputPinIndex);}
+	
+	//call this in your code to advance the quest 
+	virtual void SendOutput(int outputIndex, bool endCurrentNode = false);
+	
+	public: //Delegetes
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestStepBegin);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestStepEnd, UQuestStep*, step);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReievedInput, int, inputPinIndex);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReievedOutput, int, outputPinIndex);
+	
+	FOnQuestStepBegin OnQuestStepBegin;
+	FOnQuestStepEnd OnQuestStepEnd;
+	FOnReievedInput OnReievedInput;
+	FOnReievedOutput OnReievedOutput;
+	
+	protected: //Interface
+	
+	UPROPERTY()
+	bool isRunning;
+	
+	
+	protected: 	//core funtionallity
+	
+	UPROPERTY()	
+	TArray<FName> inputPins = {"default Pin"};
+	
+	UPROPERTY()
+	TArray<FName> outputPins = {"default Pin"};
 	
 	UPROPERTY()
 	FText nodeCatagory;
@@ -57,6 +88,8 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 	
 	UPROPERTY()
 	FText nodeToolTip;
+	
+
 	
 	
 };

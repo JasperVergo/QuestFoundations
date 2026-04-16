@@ -1,6 +1,7 @@
 #include "QuestFoundationsApp.h"
 #include "QuestAssetAppMode.h"
 #include "QuestAsset.h"
+#include "QuestStep.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "QuestFoundationsGraphSchema.h"
 #include "QuestGraphRuntime.h"
@@ -46,6 +47,27 @@ void QuestFoundationsApp::InitEditor(
 	);
 }
 
+void QuestFoundationsApp::setSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView)
+{
+	_selectedNodeDetailView = detailsView;
+	_selectedNodeDetailView->OnFinishedChangingProperties().AddRaw(this, &QuestFoundationsApp::OnNodeDetailsViewPropertiesUpdated);
+}
+
+void QuestFoundationsApp::OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection)
+{
+	//find first
+	for (UObject* obj : selection)
+	{
+		UQuestStepGraphNode* node = Cast<UQuestStepGraphNode>(obj);
+		if (node != nullptr)
+		{
+			_selectedNodeDetailView->SetObject(node->getNodeClass());
+			return;
+		}
+	}
+	_selectedNodeDetailView->SetObject(nullptr);
+}
+
 void QuestFoundationsApp::OnClose()
 {
 	UpdateWorkingAssetFromGraph();
@@ -53,17 +75,30 @@ void QuestFoundationsApp::OnClose()
 	FAssetEditorToolkit::OnClose();
 }
 
+void QuestFoundationsApp::OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event)
+{
+	if (_workingGraphUI != nullptr)
+	{
+		_workingGraphUI->NotifyGraphChanged();
+	}
+}
+
 void QuestFoundationsApp::OnGraphChanged(const FEdGraphEditAction& editAction)
 {
 	UpdateWorkingAssetFromGraph();
 }
 
+
+//is called when saving graph
 void QuestFoundationsApp::UpdateWorkingAssetFromGraph()
 {
+	
 	if (_workingAsset == nullptr && _workingGraph == nullptr)
 	{
 		return;
 	}
+	
+	UE_LOG(LogTemp, Display, TEXT("Saved Quest Graph"));
 	
 	UQuestGraphRuntimeGraph* runtimeGraph = NewObject<UQuestGraphRuntimeGraph>(_workingAsset);
 	_workingAsset->graph = runtimeGraph;
@@ -73,14 +108,19 @@ void QuestFoundationsApp::UpdateWorkingAssetFromGraph()
 	
 	for (UEdGraphNode* uiNode : _workingGraph->Nodes)
 	{
+		
+		
+		
 		UQuestGraphRuntimeNode* runtimeNode = NewObject<UQuestGraphRuntimeNode>(runtimeGraph);
 		runtimeNode->position = FVector2D(uiNode->GetPosition().X, uiNode->GetPosition().Y);
+
 		
 		for (UEdGraphPin* uiPin : uiNode->Pins)
 		{
 			UQuestGraphRuntimePin* runtimePin = NewObject<UQuestGraphRuntimePin>(runtimeNode);
 			runtimePin->pinName = uiPin->PinName;
 			runtimePin->pinID = uiPin->PinId;
+			runtimePin->parent = runtimeNode;
 			
 			if (uiPin->HasAnyConnections() && uiPin->Direction == EGPD_Output)
 			{
@@ -99,6 +139,9 @@ void QuestFoundationsApp::UpdateWorkingAssetFromGraph()
 			
 		}
 		
+		UQuestStepGraphNode* uiGraphNode = Cast<UQuestStepGraphNode>(uiNode);  
+		runtimeNode->nodeClass = DuplicateObject(uiGraphNode->getNodeClass(), runtimeNode);
+		
 		runtimeGraph->Nodes.Add(runtimeNode);
 		
 	}
@@ -108,14 +151,18 @@ void QuestFoundationsApp::UpdateWorkingAssetFromGraph()
 		UQuestGraphRuntimePin* pin2 = idToPinMap[connection.second];
 		pin1->connection = pin2;
 	}
+	
 }
-
+//is called when loading graph 
 void QuestFoundationsApp::UpdateEditorAssetFromWorkingAsset()
 {
+	
 	if (_workingAsset->graph == nullptr)
 	{
 		return;
 	}
+	
+	UE_LOG(LogTemp, Display, TEXT("Loaded Quest Graph"));
 	
 	TArray<std::pair<FGuid, FGuid>> connections;
 	TMap<FGuid, UEdGraphPin*> idToPinMap;
@@ -127,7 +174,16 @@ void QuestFoundationsApp::UpdateEditorAssetFromWorkingAsset()
 		newNode->NodePosX = runtimeNode->position.X;
 		newNode->NodePosY = runtimeNode->position.Y;
 		
-		if (runtimeNode->InputPin[0] != nullptr)
+		if (runtimeNode->nodeClass != nullptr)
+		{
+			newNode->setNodeClass(DuplicateObject(runtimeNode->nodeClass, runtimeNode));
+		}
+		else
+		{
+			newNode->setNodeClass(NewObject<UQuestStep>(runtimeNode));
+		}
+		
+		if (runtimeNode->InputPin.Num() > 0 && runtimeNode->InputPin[0] != nullptr)
 		{
 			UQuestGraphRuntimePin* pin = runtimeNode->InputPin[0];
 			UEdGraphPin* uiPin = newNode->CreateQuestPin(EEdGraphPinDirection::EGPD_Input, pin->pinName);

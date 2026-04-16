@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SGraphPanel.h"
 #include "WorkflowOrientedApp/WorkflowCentricApplication.h"
 
 class QuestFoundationsApp : public FWorkflowCentricApplication, public FEditorUndoClient, public FNotifyHook {
@@ -11,6 +12,11 @@ public: // FWorkflowCentricApplication interface
     class UQuestAsset* GetWorkingAsset() { return _workingAsset; }
 	class UEdGraph* GetWorkingGraph() { return _workingGraph; }
 
+	void setWorkingGraphUI(TSharedPtr<SGraphEditor> workingGraphUi) {_workingGraphUI = workingGraphUi;}
+	void setSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView);	
+	void OnGraphSelectionChanged(const FGraphPanelSelectionSet& selection);
+
+	
 public: // FAssetEditorToolkit interface
     virtual FName GetToolkitFName() const override { return FName(TEXT("QuestFoundationsEditorApp")); }
     virtual FText GetBaseToolkitName() const override { return FText::FromString(TEXT("QuestFoundationsEditorApp")); }
@@ -20,7 +26,9 @@ public: // FAssetEditorToolkit interface
 	virtual FString GetDocumentationLink() const override { return TEXT(""); }
 	virtual void OnToolkitHostingStarted(const TSharedRef<class IToolkit>& Toolkit) override { }
 	virtual void OnToolkitHostingFinished(const TSharedRef<class IToolkit>& Toolkit) override { }
+	
 	virtual void OnClose() override;
+	void OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event);
 	void OnGraphChanged(const FEdGraphEditAction& editAction);
 
 protected:
@@ -36,6 +44,13 @@ private:
 	class UEdGraph* _workingGraph = nullptr;
 	
 	FDelegateHandle _graphChangeListenerHandle;
+	
+	//slate widget that displays the graph
+	TSharedPtr<SGraphEditor>  _workingGraphUI = nullptr;
+	
+	TSharedPtr<class IDetailsView> _selectedNodeDetailView = nullptr;
+	
+
 };
 
 

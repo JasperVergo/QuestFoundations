@@ -16,29 +16,39 @@ class QUESTFOUNDATIONSEDITOR_API UQuestStepGraphNode : public UEdGraphNode
 {
 	GENERATED_BODY()
 	
-public:
+public: //Graph iterface
 	 
 	UQuestStepGraphNode();
 	
 	
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override {return FText::FromString(TEXT("Quest Step Node")); }
+	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override {return FLinearColor::Green;}
 	virtual bool CanUserDeleteNode() const override {return true;}
 	virtual void GetNodeContextMenuActions(class UToolMenu* menu, class UGraphNodeContextMenuContext* context) const override;
-	UEdGraphPin* CreateQuestPin(EEdGraphPinDirection direction, FName name);
-	TArray<FName> GetInputPins() {return inputPins;}
-	TArray<FName> GetOutputPins() {return outputPins;}
+	
+	virtual UEdGraphPin* CreateQuestPin(EEdGraphPinDirection direction, FName name);
+	virtual TArray<FName> GetInputPins() {return _questStep->GetInputPins();}
+	virtual TArray<FName> GetOutputPins() {return _questStep->GetOutputPins();}
+	virtual void initNodeClass() {_questStep->InitQuestStep();};
+	
+	virtual void onPropertiesChanged() {};
+
+public: //User interface
+	
+	
+	void setNodeClass(class UQuestStep* questStep)
+	{
+		_questStep = questStep;
+		_questStep->InitQuestStep();
+	}
+	class UQuestStep* getNodeClass() {return _questStep;}
+	
 
 	
 protected:
 	
 	UPROPERTY()
-	TArray<FName> inputPins;
-	UPROPERTY()
-	TArray<FName> outputPins;
-	
-	UPROPERTY()
-	UQuestStep* _workingquestStep;
+	class UQuestStep* _questStep = nullptr;
 	
 	
 };
