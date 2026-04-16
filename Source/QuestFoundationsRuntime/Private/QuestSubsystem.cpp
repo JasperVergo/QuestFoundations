@@ -8,14 +8,7 @@ DEFINE_LOG_CATEGORY_STATIC(QuestSubsyetemSub, Log, All)
 
 UQuestSubsystem::UQuestSubsystem()
 {
-	static ConstructorHelpers::FObjectFinder<UQuestAsset> testQuestFinder(TEXT("/Game/NewQuestAsset"));
-	if (testQuestFinder.Succeeded())
-	{
-		AddNewQuest(testQuestFinder.Object, GetWorld()->GetFirstPlayerController());
-	} else
-	{
-		UE_LOG(QuestSubsyetemSub, Error, TEXT("Failed to find test quest asset at path"));
-	}
+
 }
 
 void UQuestSubsystem::AddNewQuest(UQuestAsset* questAsset, APlayerController* owningPlayer)

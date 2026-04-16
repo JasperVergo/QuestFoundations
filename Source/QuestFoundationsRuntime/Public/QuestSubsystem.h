@@ -7,6 +7,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "QuestSubsystem.generated.h"
 
+
+
 /**
  * 
  */
@@ -17,6 +19,7 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestSubsystem : public UGameInstanceSubsyste
 	
 	UQuestSubsystem();
 	
+public:
 	
 	void AddNewQuest(UQuestAsset* questAsset, APlayerController* owningPlayer);
 	void FinishQuest(UQuestRunner::EQuestFinishState finishState);

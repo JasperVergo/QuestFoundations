@@ -29,8 +29,9 @@ public: // FAssetEditorToolkit interface
 	
 	virtual void OnClose() override;
 	void OnNodeDetailsViewPropertiesUpdated(const FPropertyChangedEvent& event);
-	void OnGraphChanged(const FEdGraphEditAction& editAction);
 
+	void OnWorkingAssetPreSave();
+	
 protected:
 	void UpdateWorkingAssetFromGraph();
 	void UpdateEditorAssetFromWorkingAsset();
@@ -43,7 +44,6 @@ private:
 	UPROPERTY()
 	class UEdGraph* _workingGraph = nullptr;
 	
-	FDelegateHandle _graphChangeListenerHandle;
 	
 	//slate widget that displays the graph
 	TSharedPtr<SGraphEditor>  _workingGraphUI = nullptr;

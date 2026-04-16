@@ -17,14 +17,14 @@ void UQuestRunner::RunQuest(UQuestAsset* QuestAsset, APlayerController* owningPl
 	//find first node 
 	for (UQuestGraphRuntimeNode* node : _questGraph->Nodes)
 	{
-		if (Cast<UQuestStartNode>(node))
+		if (Cast<UQuestStartNode>(node->nodeClass))
 		{
 			AddRunningNode(node);
 			break;
 		}
 	}
 	
-	if (_runningNodes[0] == nullptr)
+	if (_runningNodes.Num() <= 0 || _runningNodes[0] == nullptr)
 	{
 		UE_LOG(QuestPlayerSub, Error, TEXT("No start node found in quest graph"));
 		return;

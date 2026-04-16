@@ -17,6 +17,7 @@ void QuestFoundationsApp::InitEditor(
     objectsToEdit.Add(inObject);
     
     _workingAsset = Cast<UQuestAsset>(inObject);
+	_workingAsset->SetPreSaveListener([this] () { OnWorkingAssetPreSave(); });
 	
 	_workingGraph = FBlueprintEditorUtils::CreateNewGraph(
 		GetWorkingAsset(),
@@ -42,9 +43,7 @@ void QuestFoundationsApp::InitEditor(
 	
 	UpdateEditorAssetFromWorkingAsset();
 	
-	_graphChangeListenerHandle = _workingGraph->AddOnGraphChangedHandler(
-		FOnGraphChanged::FDelegate::CreateSP(this, &QuestFoundationsApp::OnGraphChanged)	
-	);
+	
 }
 
 void QuestFoundationsApp::setSelectedNodeDetailView(TSharedPtr<class IDetailsView> detailsView)
@@ -71,7 +70,7 @@ void QuestFoundationsApp::OnGraphSelectionChanged(const FGraphPanelSelectionSet&
 void QuestFoundationsApp::OnClose()
 {
 	UpdateWorkingAssetFromGraph();
-	_workingGraph->RemoveOnGraphChangedHandler(_graphChangeListenerHandle);
+	_workingAsset->SetPreSaveListener(nullptr);
 	FAssetEditorToolkit::OnClose();
 }
 
@@ -83,10 +82,11 @@ void QuestFoundationsApp::OnNodeDetailsViewPropertiesUpdated(const FPropertyChan
 	}
 }
 
-void QuestFoundationsApp::OnGraphChanged(const FEdGraphEditAction& editAction)
+void QuestFoundationsApp::OnWorkingAssetPreSave()
 {
 	UpdateWorkingAssetFromGraph();
 }
+
 
 
 //is called when saving graph
