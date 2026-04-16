@@ -109,8 +109,6 @@ void QuestFoundationsApp::UpdateWorkingAssetFromGraph()
 	for (UEdGraphNode* uiNode : _workingGraph->Nodes)
 	{
 		
-		
-		
 		UQuestGraphRuntimeNode* runtimeNode = NewObject<UQuestGraphRuntimeNode>(runtimeGraph);
 		runtimeNode->position = FVector2D(uiNode->GetPosition().X, uiNode->GetPosition().Y);
 
@@ -141,6 +139,7 @@ void QuestFoundationsApp::UpdateWorkingAssetFromGraph()
 		
 		UQuestStepGraphNode* uiGraphNode = Cast<UQuestStepGraphNode>(uiNode);  
 		runtimeNode->nodeClass = DuplicateObject(uiGraphNode->getNodeClass(), runtimeNode);
+		runtimeNode->nodeClass->SetParent(runtimeNode);
 		
 		runtimeGraph->Nodes.Add(runtimeNode);
 		

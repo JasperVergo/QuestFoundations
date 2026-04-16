@@ -25,7 +25,13 @@ void ATestPlayerController::BeginPlay()
 
 	// Play the dialog
 	_questSubsystem = GetGameInstance()->GetSubsystem<UQuestSubsystem>();
+	if (GetWorld() == nullptr)
+	{
+		UE_LOG(TestPlayerControllerSub, Error, TEXT("World context is null"));
+	}
+	
 	if (_questAsset != nullptr) {
 		_questSubsystem->AddNewQuest(_questAsset, this);
+		_questSubsystem->setWorldContext(GetWorld());
 	}
 }

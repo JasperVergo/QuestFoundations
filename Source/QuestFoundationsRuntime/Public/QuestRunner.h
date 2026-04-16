@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class QUESTFOUNDATIONSRUNTIME_API UQuestRunner : public UObject
+class QUESTFOUNDATIONSRUNTIME_API UQuestRunner : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 	
@@ -26,18 +26,36 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestRunner : public UObject
 		Failed,
 		Botched,
 	};
-	
+	UFUNCTION()
 	void RunQuest(class UQuestAsset* QuestAsset, APlayerController* owningPlayer);
-	void AdvanceQuestByIndex(class UQuestGraphRuntimeNode* node, int outputPinIndex, bool stopRunningExitNode = false);
+	
+	void AdvanceQuestByIndexWithStop(class UQuestGraphRuntimeNode* node, int outputPinIndex, bool stopRunningExitNode);
+	UFUNCTION()
+	void AdvanceQuestByIndex(class UQuestGraphRuntimeNode* node, int outputPinIndex);
+	UFUNCTION()
 	void AddRunningNode(class UQuestGraphRuntimeNode* node);
-	void RemoveRunningNode(class UQuestGraphRuntimeNode* node);
+	UFUNCTION()
+	void RemoveRunningNodeByNode(class UQuestGraphRuntimeNode* node);
+	UFUNCTION()
 	void RemoveRunningNode(class UQuestStep* step);
+	UFUNCTION()
 	void TickRunningNodes(float DeltaTime);
-	virtual void Tick(float DeltaTime);
+	void SetWorldContext(UWorld* context);
+	
+	
+	virtual void Tick(float DeltaTime) override;
+	
+	bool IsTickable() const override;
+	TStatId GetStatId() const override;
+	ETickableTickType GetTickableTickType() const override;
 
 	
 	
 	private:
+	
+	UPROPERTY()
+	UWorld* worldContext = nullptr;
+	
 	UPROPERTY()
 	class UQuestAsset* _questAsset = nullptr;
 	

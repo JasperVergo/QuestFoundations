@@ -21,5 +21,20 @@ void UQuestSubsystem::AddNewQuest(UQuestAsset* questAsset, APlayerController* ow
 void UQuestSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	UE_LOG(QuestSubsyetemSub, Log, TEXT("Initializing Quest Subsystem"));
+}
+
+void UQuestSubsystem::setWorldContext(UWorld* context)
+{
+	if (context == nullptr)
+	{
+		UE_LOG(QuestSubsyetemSub, Error, TEXT("Context is nullptr in quest subsystem"));
+	} else
+	{
+		UE_LOG(QuestSubsyetemSub, Log, TEXT("Context set in quest subsystem"));
+	}
+	_worldContext = context;
+	for (UQuestRunner* obj : _activeQuests)
+	{
+		obj->SetWorldContext(context);
+	}
 }

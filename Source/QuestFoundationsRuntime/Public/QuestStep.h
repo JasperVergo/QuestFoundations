@@ -6,7 +6,10 @@
 #include "UObject/Object.h"
 #include "QuestStep.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestStepBegin);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestStepEnd, UQuestStep*, step);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReievedInput, int, inputPinIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnReievedOutput, class UQuestGraphRuntimeNode*, node, int, outputPinIndex);
 /**
  * 
  */
@@ -51,20 +54,28 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 	virtual void EndQuestStep() {OnQuestStepEnd.Broadcast(this);}
 	virtual void TickQuestStep(float DeltaTime) {}
 	virtual void ResievedInput(int inputPinIndex) {OnReievedInput.Broadcast(inputPinIndex);}
+	void SetParent(class UQuestGraphRuntimeNode* node) {parentNode = node;}
+	class UQuestGraphRuntimeNode* getParent() {return parentNode;}
+	virtual void setWorldContext(UWorld* Context);
+	
 	
 	//call this in your code to advance the quest 
-	virtual void SendOutput(int outputIndex, bool endCurrentNode = false);
+	virtual void SendOutput(int outputIndex, bool endCurrentNode = true);
 	
 	public: //Delegetes
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestStepBegin);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuestStepEnd, UQuestStep*, step);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReievedInput, int, inputPinIndex);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnReievedOutput, int, outputPinIndex);
+
 	
+	UPROPERTY(BlueprintAssignable)
 	FOnQuestStepBegin OnQuestStepBegin;
+	UPROPERTY(BlueprintAssignable)
 	FOnQuestStepEnd OnQuestStepEnd;
+	UPROPERTY(BlueprintAssignable)
 	FOnReievedInput OnReievedInput;
+	UPROPERTY(BlueprintAssignable)
 	FOnReievedOutput OnReievedOutput;
+	
+	//TODO: this should be depricated when deliages are fixed
+	class UQuestRunner* owningRunner = nullptr;
 	
 	protected: //Interface
 	
@@ -73,6 +84,9 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 	
 	
 	protected: 	//core funtionallity
+	
+	UPROPERTY()
+	UWorld* worldContext = nullptr;
 	
 	UPROPERTY()	
 	TArray<FName> inputPins = {"default Pin"};
@@ -88,6 +102,9 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 	
 	UPROPERTY()
 	FText nodeToolTip;
+	
+	UPROPERTY()
+	class UQuestGraphRuntimeNode* parentNode = nullptr;
 	
 
 	

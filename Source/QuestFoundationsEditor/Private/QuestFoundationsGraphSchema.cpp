@@ -66,6 +66,7 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* parentGraph, UEdGraphPin* 
 	result->NodePosY = location.Y;
 	result->setNodeClass(NewObject<UQuestStep>(result, nodeType));
 	
+	
 	UEdGraphPin* inputPin = nullptr;
 
 	if (IsValid(result->getNodeClass()) )

@@ -24,8 +24,13 @@ public:
 	void AddNewQuest(UQuestAsset* questAsset, APlayerController* owningPlayer);
 	void FinishQuest(UQuestRunner::EQuestFinishState finishState);
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	void setWorldContext(UWorld* context);
+	
 	
 	private:
 	UPROPERTY()
 	TArray<UQuestRunner*> _activeQuests;
+	
+	UPROPERTY()
+	UWorld* _worldContext = nullptr;
 };
