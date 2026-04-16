@@ -182,17 +182,23 @@ void QuestFoundationsApp::UpdateEditorAssetFromWorkingAsset()
 			newNode->setNodeClass(NewObject<UQuestStep>(runtimeNode));
 		}
 		
-		if (runtimeNode->InputPin.Num() > 0 && runtimeNode->InputPin[0] != nullptr)
+		if (runtimeNode->InputPin.Num() > 0)
 		{
-			UQuestGraphRuntimePin* pin = runtimeNode->InputPin[0];
-			UEdGraphPin* uiPin = newNode->CreateQuestPin(EEdGraphPinDirection::EGPD_Input, pin->pinName);
-			uiPin->PinId = pin->pinID;
-			
-			if (pin->connection != nullptr)
+			for (UQuestGraphRuntimePin* inPin : runtimeNode->InputPin)
 			{
-				connections.Add(std::make_pair(pin->pinID, pin->connection->pinID));
+				if (inPin != nullptr)
+				{
+					UQuestGraphRuntimePin* pin = inPin;
+					UEdGraphPin* uiPin = newNode->CreateQuestPin(EEdGraphPinDirection::EGPD_Input, pin->pinName);
+					uiPin->PinId = pin->pinID;
+			
+					if (pin->connection != nullptr)
+					{
+						connections.Add(std::make_pair(pin->pinID, pin->connection->pinID));
+					}
+					idToPinMap.Add(pin->pinID, uiPin);
+				}
 			}
-			idToPinMap.Add(pin->pinID, uiPin);
 		}
 		
 		for (UQuestGraphRuntimePin* pin : runtimeNode->OutputPins)

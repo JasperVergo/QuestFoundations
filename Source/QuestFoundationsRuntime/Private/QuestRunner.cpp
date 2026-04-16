@@ -77,7 +77,7 @@ void UQuestRunner::AddRunningNode(class UQuestGraphRuntimeNode* node)
 	_runningNodes.Add(node);
 	node->nodeClass->owningRunner = this;
 	node->nodeClass->BeginQuestStep();
-	node->nodeClass->OnQuestStepEnd.AddDynamic(this, &UQuestRunner::RemoveRunningNode);
+	//node->nodeClass->OnQuestStepEnd.AddDynamic(this, &UQuestRunner::RemoveRunningNode);
 	if (node->nodeClass->getParent() == nullptr)
 	{
 		UE_LOG(QuestPlayerSub, Error, TEXT("Node Parent is null"));
@@ -107,6 +107,7 @@ void UQuestRunner::RemoveRunningNode(UQuestStep* step)
 
 void UQuestRunner::TickRunningNodes(float DeltaTime)
 {
+	//TODO this runs into issues when a node is removed mid iteration 
 	for (UQuestGraphRuntimeNode* node : _runningNodes)
 	{
 		node->nodeClass->TickQuestStep(DeltaTime);
