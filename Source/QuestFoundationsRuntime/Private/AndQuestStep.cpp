@@ -29,7 +29,7 @@ void UAndQuestStep::ResievedInput(int inputPinIndex)
 	
 	if (resievedA && resievedB)
 	{
-		SendOutput(1, true);
+		SendOutput(0, true);
 	}
 	
 }

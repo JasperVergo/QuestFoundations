@@ -8,9 +8,6 @@ DEFINE_LOG_CATEGORY_STATIC(QuestStepSub, Log, All)
 
 void UQuestStep::BeginQuestStep()
 {
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Running Node: %s"), *nodeName.ToString()));
-
 	UE_LOG(QuestStepSub, Log, TEXT("Beginning Quest Step %s"), *nodeName.ToString());
 	OnQuestStepBegin.Broadcast();
 }

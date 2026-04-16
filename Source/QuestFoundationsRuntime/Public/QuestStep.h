@@ -77,6 +77,10 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestStep : public UObject
 	//TODO: this should be depricated when deliages are fixed
 	class UQuestRunner* owningRunner = nullptr;
 	
+public:
+	UPROPERTY(EditAnywhere)
+	FText comments = FText::FromString(TEXT("Comments here"));
+	
 	protected: //Interface
 	
 	UPROPERTY()
