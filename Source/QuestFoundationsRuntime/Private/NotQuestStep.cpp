@@ -26,7 +26,9 @@ void UNotQuestStep::ResievedInput(int inputPinIndex)
 	{
 		if (!hasBeenNegated)
 		{
+			UE_LOG(LogTemp, Log, TEXT("Passed Through not gate"));
 			SendOutput(0);
+			
 		}
 	}
 }

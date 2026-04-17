@@ -23,43 +23,6 @@ void UQuestStepGraphNode::GetNodeContextMenuActions(class UToolMenu* menu,
 	
 	UQuestStepGraphNode* node = (UQuestStepGraphNode*)this;
 	section.AddMenuEntry(
-		TEXT("AddPinEntry"),
-		FText::FromString(TEXT("Add Pin")),
-		FText::FromString(TEXT("Creates a new pin")),
-		FSlateIcon(TEXT("QuestFoundationsEditorStyle"), TEXT("QuestFoundations.NodeAddPinIcon")),
-		FUIAction(FExecuteAction::CreateLambda(
-			[node](){
-				
-				node->CreateQuestPin(EEdGraphPinDirection::EGPD_Output, TEXT("Another one"));
-				
-				node->GetGraph()->NotifyGraphChanged();
-				node->GetGraph()->Modify();
-				
-			}
-		))
-	);
-	section.AddMenuEntry(
-	TEXT("DeletePinEntry"),
-	FText::FromString(TEXT("Delete Pin")),
-	FText::FromString(TEXT("Deletes the last pin")),
-	FSlateIcon(TEXT("QuestFoundationsEditorStyle"), TEXT("QuestFoundations.NodeDeleteIcon")),
-	
-	FUIAction(FExecuteAction::CreateLambda(
-		[node](){
-			UEdGraphPin* pin = node->GetPinAt(node->Pins.Num() - 1);
-			if (pin->Direction != EEdGraphPinDirection::EGPD_Input)
-			{
-				node->RemovePin(pin);
-				
-				node->GetGraph()->NotifyGraphChanged();
-				node->GetGraph()->Modify();
-			}
-				
-			}
-		))
-	);
-	
-	section.AddMenuEntry(
 TEXT("DeleteNode"),
 FText::FromString(TEXT("Delete Nodde")),
 FText::FromString(TEXT("Deletes the Node")),

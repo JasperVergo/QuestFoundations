@@ -15,8 +15,6 @@ void UQuestFoundationsGraphSchema::GetGraphContextActions(FGraphContextMenuBuild
 	TArray<UClass*> nodeClasses;
 	GetDerivedClasses(UQuestStep::StaticClass(), nodeClasses, true);
 	nodeClasses.Add(UQuestStep::StaticClass());
-	//nodeClasses.Add(UExsampleQuestStep::StaticClass());
-	//TODO: Replace with template that dose this automatically 
 	
 	for (UClass* nodeClass : nodeClasses)
 	{
