@@ -25,5 +25,7 @@ void ATestPlayerController::BeginPlay()
 		UE_LOG(TestPlayerControllerSub, Error, TEXT("World context is null"));
 	}
 	_questSubsystem->setWorldContext(GetWorld());
-	_questSubsystem->startQuest(TEXT("/Game/NewQuestAsset"), this);
+	
+	//this is what you would do to add a new quest  
+    //_questSubsystem->startQuest(TEXT("/Game/NewQuestAsset"), this);
 }

@@ -20,7 +20,7 @@ void UQuestSubsystem::startQuest(FString fileName, APlayerController* controller
 {
 	UQuestAsset* questAsset = nullptr;
 	FString gamePath = TEXT("/Game/");
-	FString filePath = gamePath + TEXT("NewQuestAsset");
+	FString filePath = gamePath + fileName;
 	UE_LOG(QuestSubsyetemSub, Log, TEXT("Trying to load quest asset from path: %s"), *filePath);
 	questAsset = LoadObject<UQuestAsset>(nullptr, filePath);
 	
