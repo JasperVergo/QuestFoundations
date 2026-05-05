@@ -20,7 +20,8 @@ class QUESTFOUNDATIONSRUNTIME_API UQuestSubsystem : public UGameInstanceSubsyste
 	UQuestSubsystem();
 	
 public:
-	
+	UFUNCTION(BlueprintCallable)
+	void startQuest(FString fileName,class APlayerController* controller);
 	void AddNewQuest(UQuestAsset* questAsset, APlayerController* owningPlayer);
 	void FinishQuest(UQuestRunner::EQuestFinishState finishState);
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

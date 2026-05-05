@@ -26,8 +26,6 @@ void UQuestStep::setWorldContext(UWorld* Context)
 
 void UQuestStep::SendOutput(int outputIndex, bool endCurrentNode)
 {
-	OnReievedOutput.Broadcast(parentNode, outputIndex); 
-	
 	//TODO: this needs to be depricated when delegates are fixed
 	if (owningRunner)
 	{
@@ -35,5 +33,9 @@ void UQuestStep::SendOutput(int outputIndex, bool endCurrentNode)
 	}
 	UE_LOG(QuestStepSub, Log, TEXT("Output connected to %i"), OnReievedOutput.IsBound())
 	
+	OnReievedOutput.Broadcast(parentNode, outputIndex); 
+	
 	if (endCurrentNode) EndQuestStep();
+	
+	
 }

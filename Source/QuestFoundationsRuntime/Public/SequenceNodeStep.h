@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class QUESTFOUNDATIONSEDITOR_API USequenceNodeStep : public UQuestStep
+class QUESTFOUNDATIONSRUNTIME_API USequenceNodeStep : public UQuestStep
 {
 	GENERATED_BODY()
 	

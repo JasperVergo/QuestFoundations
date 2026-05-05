@@ -10,13 +10,8 @@ DEFINE_LOG_CATEGORY_STATIC(TestPlayerControllerSub, Log, All);
 
 ATestPlayerController::ATestPlayerController()
 {
-	static ConstructorHelpers::FObjectFinder<UQuestAsset> questAssetFinder(TEXT("/Game/NewQuestAsset"));
-	if (questAssetFinder.Succeeded()) {
-		_questAsset = questAssetFinder.Object;
-		UE_LOG(TestPlayerControllerSub, Log, TEXT("Loaded quest Asset"));
-	} else {
-		UE_LOG(TestPlayerControllerSub, Error, TEXT("Could not load content"));
-	}
+	
+	
 }
 
 void ATestPlayerController::BeginPlay()
@@ -29,9 +24,6 @@ void ATestPlayerController::BeginPlay()
 	{
 		UE_LOG(TestPlayerControllerSub, Error, TEXT("World context is null"));
 	}
-	
-	if (_questAsset != nullptr) {
-		_questSubsystem->AddNewQuest(_questAsset, this);
-		_questSubsystem->setWorldContext(GetWorld());
-	}
+	_questSubsystem->setWorldContext(GetWorld());
+	_questSubsystem->startQuest(TEXT("/Game/NewQuestAsset"), this);
 }

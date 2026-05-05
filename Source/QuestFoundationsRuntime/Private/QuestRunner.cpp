@@ -55,7 +55,16 @@ void UQuestRunner::AdvanceQuestByIndexWithStop(class UQuestGraphRuntimeNode* nod
 		{
 			UE_LOG(QuestPlayerSub, Error, TEXT("Output pin %s has no parent recommend adding a end quest node here"), *outputPin->pinName.ToString());
 		}
-		AddRunningNode(outputPin->connection->parent);
+		if (!_runningNodes.Contains(outputPin->connection->parent))
+		{
+			AddRunningNode(outputPin->connection->parent);
+		}
+		if (outputPin->connection->parent->InputPin.Find(outputPin->connection) == INDEX_NONE)
+		{
+			UE_LOG(QuestPlayerSub, Error, TEXT("Output pin %s is not connected to a valid input pin and is thought to be"), *outputPin->pinName.ToString());
+			return;
+		}
+		outputPin->connection->parent->nodeClass->ResievedInput(outputPin->connection->parent->InputPin.Find(outputPin->connection));
 	}
 	if (stopRunningExitNode)
 	{

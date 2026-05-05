@@ -5,7 +5,7 @@
 
 void UExsampleQuestStep::InitQuestStep()
 {
-	nodeToolTip = FText::FromString(TEXT("Quests"));
+	nodeCatagory = FText::FromString(TEXT("Quests"));
 	nodeName = FText::FromString(TEXT("Another quest node"));
 	nodeToolTip = FText::FromString(TEXT("This is just a test"));
 	inputPins = {"input Pin"};

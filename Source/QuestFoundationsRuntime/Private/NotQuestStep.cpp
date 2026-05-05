@@ -17,18 +17,19 @@ void UNotQuestStep::InitQuestStep()
 
 void UNotQuestStep::ResievedInput(int inputPinIndex)
 {
+
 	Super::ResievedInput(inputPinIndex);
 	if (inputPinIndex == 1)
 	{
 		hasBeenNegated = true;
+		UE_LOG(LogTemp, Log, TEXT("Closed Gate"));
 	}
 	else
 	{
 		if (!hasBeenNegated)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Passed Through not gate"));
+
 			SendOutput(0);
-			
 		}
 	}
 }
